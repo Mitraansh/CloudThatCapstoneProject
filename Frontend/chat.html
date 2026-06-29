@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flower Shop Chat</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f5f1; margin: 0; }
+    header { background: #865858; color: white; padding: 1rem; text-align: center; }
+    main { padding: 1rem; max-width: 720px; margin: 0 auto; }
+    .card { background: white; border-radius: 10px; padding: 1rem; margin-top: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    textarea, input { width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 8px; }
+    button { background: #865858; color: white; border: none; padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer; }
+    .response { margin-top: 1rem; white-space: pre-wrap; }
+    .page-nav { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .page-nav a { text-decoration: none; }
+    .page-nav button { padding: 0.5rem 0.75rem; border-radius: 6px; border: none; cursor: pointer; background: #d99b9b; color: white; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Flower Shop Q&A</h1>
+    <p>Ask about flowers, care, stock, and promotions.</p>
+  </header>
+  <div class="page-nav" style="margin: 1rem auto; max-width: 720px;">
+    <a href="/"><button type="button">Home</button></a>
+    <a href="/static/signup.html"><button type="button">Signup</button></a>
+    <a href="/static/login.html"><button type="button">Login</button></a>
+    <a href="/chat"><button type="button">Chat</button></a>
+    <a href="/static/status.html"><button type="button">Status</button></a>
+  </div>
+  <main>
+    <div class="card">
+      <label for="question">Your question</label>
+      <textarea id="question" rows="4"></textarea>
+      <button id="ask-button">Ask</button>
+      <div class="response" id="response"></div>
+    </div>
+  </main>
+  <script>
+    const askButton = document.getElementById('ask-button');
+    const responseDiv = document.getElementById('response');
+
+    askButton.addEventListener('click', async () => {
+      const question = document.getElementById('question').value;
+      const token = localStorage.getItem('flower-token');
+      const email = localStorage.getItem('flower-email');
+      if (!token || !email) {
+        responseDiv.textContent = 'Please login first using /static/login.html';
+        return;
+      }
+      responseDiv.textContent = 'Sending question...';
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'X-User-Email': email,
+          },
+          body: JSON.stringify({ question }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Chat failed');
+        responseDiv.innerHTML = `<strong>Source:</strong> ${data.source}<br><strong>Confidence:</strong> ${data.confidence}<br><br>${data.answer}`;
+      } catch (error) {
+        responseDiv.textContent = error.message;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flower Shop Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f5f1; color: #333; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    .container { width: 320px; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+    label { display: block; margin-top: 1rem; }
+    input { width: 100%; padding: 0.75rem; margin-top: 0.5rem; border: 1px solid #ccc; border-radius: 6px; }
+    button { width: 100%; margin-top: 1rem; padding: 0.75rem; border: none; border-radius: 6px; background: #865858; color: white; font-size: 1rem; cursor: pointer; }
+    .message { margin-top: 1rem; min-height: 1.4rem; }
+    .page-nav { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .page-nav a { text-decoration: none; }
+    .page-nav button { padding: 0.5rem 0.75rem; border-radius: 6px; border: none; cursor: pointer; background: #d99b9b; color: white; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="page-nav">
+      <a href="/"><button type="button">Home</button></a>
+      <a href="/static/signup.html"><button type="button">Signup</button></a>
+      <a href="/static/login.html"><button type="button">Login</button></a>
+      <a href="/chat"><button type="button">Chat</button></a>
+      <a href="/static/status.html"><button type="button">Status</button></a>
+    </div>
+    <h1>Login</h1>
+    <form id="login-form">
+      <label>Email<input type="email" id="email" required /></label>
+      <label>Password<input type="password" id="password" required /></label>
+      <button type="submit">Login</button>
+    </form>
+    <p class="message" id="message"></p>
+    <p style="margin-top:0.75rem; font-size:0.95rem; text-align:center;">Don't have an account? <a href="/static/signup.html">Sign up here</a>.</p>
+  </div>
+  <script>
+    const form = document.getElementById('login-form');
+    const message = document.getElementById('message');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        let data;
+        try {
+          data = await response.json();
+        } catch (parseError) {
+          const text = await response.text();
+          throw new Error(text || 'Login failed: invalid server response');
+        }
+        if (!response.ok) throw new Error(data.detail || data.message || 'Login failed');
+        localStorage.setItem('flower-token', data.token);
+        localStorage.setItem('flower-email', data.email);
+        message.textContent = 'Login successful. Visit the chat page.';
+      } catch (error) {
+        message.textContent = error.message;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flower Shop Status</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f5f1; margin: 0; }
+    header { background: #865858; color: white; padding: 1rem; text-align: center; }
+    main { padding: 1rem; max-width: 640px; margin: 0 auto; }
+    .card { background: white; border-radius: 10px; padding: 1rem; margin-top: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .status-ok { color: green; }
+    .status-unhealthy { color: red; }
+    button { margin-top: 1rem; background: #865858; color: white; border: none; padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer; }
+    .page-nav { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .page-nav a { text-decoration: none; }
+    .page-nav button { padding: 0.5rem 0.75rem; border-radius: 6px; border: none; cursor: pointer; background: #d99b9b; color: white; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Flower Shop Status</h1>
+  </header>
+  <div class="page-nav" style="margin: 1rem auto; max-width: 640px;">
+    <a href="/"><button type="button">Home</button></a>
+    <a href="/static/signup.html"><button type="button">Signup</button></a>
+    <a href="/static/login.html"><button type="button">Login</button></a>
+    <a href="/chat"><button type="button">Chat</button></a>
+    <a href="/static/status.html"><button type="button">Status</button></a>
+  </div>
+  <main>
+    <div class="card">
+      <div id="status"></div>
+      <div id="details"></div>
+      <button id="refresh">Refresh status</button>
+    </div>
+  </main>
+  <script>
+    const statusEl = document.getElementById('status');
+    const detailsEl = document.getElementById('details');
+
+    async function loadStatus() {
+      statusEl.textContent = 'Loading...';
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        statusEl.innerHTML = `<strong>Status:</strong> <span class="status-${data.status}">${data.status}</span>`;
+        detailsEl.innerHTML = `<p><strong>Database:</strong> ${data.database}</p><p><strong>Version:</strong> ${data.version}</p>`;
+      } catch (error) {
+        statusEl.textContent = 'Unable to fetch status';
+        detailsEl.textContent = error.message;
+      }
+    }
+
+    document.getElementById('refresh').addEventListener('click', loadStatus);
+    loadStatus();
+  </script>
+</body>
+</html>

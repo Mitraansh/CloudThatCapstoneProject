@@ -1,0 +1,42 @@
+TESTS TODO - READ BEFORE CODING
+
+Create unit, integration, and evaluation tests for the FLOWER SHOP project.
+
+Required tasks:
+1. Add unit tests for backend routes and service/helper functions.
+	- Cover `signup`, `login`, token validation, and helper functions in `auth.py`.
+	- Cover `classify_query` logic and any small pure functions in `ai.py`.
+2. Add integration tests for:
+	- Signup and login flows (success + failure cases).
+	- Protected route access (token required, invalid token handling).
+	- Chat endpoint behavior for known queries (ensure expected classifications and response shapes).
+	- Image upload validation and storage rejection/acceptance cases.
+	- Health/status endpoint returns expected fields.
+3. Add database tests for schema initialization and seed data.
+	- Verify DB schema loads and seed data is accessible via query helpers in `db.py`.
+4. Add RAG evaluation tests for groundedness and faithfulness where applicable.
+	- Use `promptfoo` or lightweight evaluation harness to assert that generated responses remain grounded in known content.
+5. Add Text2SQL correctness checks (if Text2SQL feature present).
+	- Provide NL → SQL examples and assert generated SQL matches expected patterns or results.
+6. Add coverage reporting and a CI gate to fail on dropped coverage.
+7. Ensure tests are added to the existing suite and never replace UAT-passing tests.
+8. Document how to run all tests locally and in CI, including any environment variables required (for example `GITHUB_TOKEN` for promptfoo providers).
+
+Evaluation gates you must satisfy:
+1. Test Coverage Delta check — CI must verify coverage does NOT decrease after adding Copilot-generated tests.
+2. Any coverage drop = PR blocked.
+3. Write tests for the behavior you are building before considering it complete.
+4. RAG faithfulness >= 0.85 where RAG evaluations apply.
+5. Text2SQL correctness >= 90% when Text2SQL tests are present.
+6. Keep tests practical — a working app with meaningful tests is more important than a heavy CI setup.
+
+Notes:
+- Keep tests deterministic where possible; mock external LLM calls or network access.
+- Add small fixtures for common setup (DB, test client, auth tokens).
+- Add explicit instructions in `README.md` or `Tests/README.md` describing how to run tests and view coverage.
+
+Files to prioritize:
+- `Tests/test_app.py` — extend with the above tests.
+- New files: `Tests/test_db.py`, `Tests/test_auth.py`, `Tests/test_ai.py`, `Tests/test_integration.py`.
+
+If you want, I can scaffold these test files and add a GitHub Actions job snippet to enforce the coverage gate.
