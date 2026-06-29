@@ -32,11 +32,15 @@ copy .env.example .env
 python Backend/app.py
 ```
 
-4. Run the promptfoo evaluation:
+4. Run the promptfoo evaluation (requires `GITHUB_TOKEN` in `.env`):
 
 ```bash
-npx promptfoo eval --config promptfooconfig.yaml
+copy .env.example .env
+# Add your GitHub token to .env, then:
+npx promptfoo eval --config promptfooconfig.yaml --env-file .env
 ```
+
+For CI, add the same token as a repository secret named `MODELS_GITHUB_TOKEN` in GitHub → Settings → Secrets and variables → Actions.
 
 5. Open the app in your browser:
 

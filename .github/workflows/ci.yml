@@ -19,5 +19,9 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run tests
         run: pytest Tests/test_app.py
+      - name: Create .env for promptfoo
+        run: echo "GITHUB_TOKEN=${GITHUB_TOKEN}" >> .env
+        env:
+          GITHUB_TOKEN: ${{ secrets.MODELS_GITHUB_TOKEN }}
       - name: Run promptfoo eval
-        run: npx promptfoo eval --config promptfooconfig.yaml
+        run: npx promptfoo eval --config promptfooconfig.yaml --env-file .env
