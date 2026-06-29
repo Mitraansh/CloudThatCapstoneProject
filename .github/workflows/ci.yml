@@ -1,34 +1,37 @@
-name: CI
+name: ci
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+on: [pull_request]
 
 jobs:
-  test:
+  eval:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: 3.11
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-      - name: Run tests
-        run: pytest Tests/test_app.py
-      - name: Debug Secret Presence
+      - uses: actions/checkout@v3
+
+      - name: Install promptfoo
+        run: npm install -g promptfoo
+
+      - name: Validate required secrets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ -z "$GITHUB_TOKEN" ]; then
-            echo "GITHUB_TOKEN is EMPTY"
-          else
-            echo "GITHUB_TOKEN is SET"
-          fi
+          test -n "$GITHUB_TOKEN" || (echo "GITHUB_TOKEN is not available" && exit 1)
+
+      - name: Run evals
         env:
-          GITHUB_TOKEN: ${{ secrets.test }}
-      - name: Run promptfoo eval
-        run: npx promptfoo eval --config promptfooconfig.yaml
-        env:
-          GITHUB_TOKEN: ${{ secrets.test }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: promptfoo eval --output results.json
+
+      - name: Check pass rate
+        run: |
+          PASS=$(python3 -c "
+          import json
+          with open('results.json') as f:
+              d = json.load(f)
+          s = d['results']['stats']
+          rate = s['successes'] / s['total'] * 100
+          print(f'{rate:.1f}')
+          ")
+          echo "Eval pass rate: $PASS%"
+          python3 -c "exit(0 if float('$PASS') >= 80 else 1)" || \
+            (echo "BLOCKED: Pass rate $PASS% is below 80% threshold." && exit 1)
