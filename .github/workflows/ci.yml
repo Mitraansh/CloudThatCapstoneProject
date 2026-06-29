@@ -19,6 +19,15 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run tests
         run: pytest Tests/test_app.py
+      - name: Debug Secret Presence
+        run: |
+          if [ -z "$GITHUB_TOKEN" ]; then
+            echo "GITHUB_TOKEN is EMPTY"
+          else
+            echo "GITHUB_TOKEN is SET"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.test }}
       - name: Run promptfoo eval
         run: npx promptfoo eval --config promptfooconfig.yaml
         env:
