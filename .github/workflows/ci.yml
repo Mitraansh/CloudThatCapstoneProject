@@ -29,14 +29,15 @@ jobs:
         run: promptfoo eval --output results.json
 
       - name: Check pass rate
-        run: |
-          PASS=$(python3 -c "
-          import json
-          with open('results.json') as f:
-              d=json.load(f)
-          s=d['results']['stats']
-          rate=s['successes']/s['total']*100 if s['total'] else 0
-          print(f'{rate:.1f}')
-          ")
-          echo "Pass Rate: $PASS%"
-          python3 -c "exit(0 if float('$PASS')>=80 else 1)"
+              run: |
+                PASS=$(python3 -c "
+                import json
+                with open('results.json') as f:
+                    d=json.load(f)
+                s=d['results']['stats']
+                total = s['successes'] + s['failures'] + s['errors']
+                rate = (s['successes'] / total * 100) if total > 0 else 0
+                print(f'{rate:.1f}')
+                ")
+                echo "Pass Rate: $PASS%"
+                python3 -c "exit(0 if float('$PASS')>=80 else 1)"
