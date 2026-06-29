@@ -7,7 +7,7 @@ def seed_data() -> None:
     db.execute("INSERT OR IGNORE INTO categories (name, description) VALUES (?, ?)", ("Seasonal", "Seasonal flowers and arrangements."))
     db.execute(
         "INSERT OR IGNORE INTO flowers (name, category_id, price, stock, description, season) VALUES (?, ?, ?, ?, ?, ?)",
-        ("Red Rose", 1, 39.99, 10, "Fresh red roses for romance.", "Valentine"),
+        ("Red Rose", 1, 39.99, 10, "Fresh red roses for romance .", "Valentine"),
     )
     db.execute(
         "INSERT OR IGNORE INTO flowers (name, category_id, price, stock, description, season) VALUES (?, ?, ?, ?, ?, ?)",
