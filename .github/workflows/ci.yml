@@ -35,13 +35,19 @@ jobs:
           npm list -g promptfoo
 
       # ADD THIS
-      - name: Test Hugging Face API
+      - name: Test Chat Completions API
         env:
           HUGGINGFACE_API_TOKEN: ${{ secrets.TEST }}
         run: |
-          curl -i \
-            https://router.huggingface.co/v1/models \
-            -H "Authorization: Bearer $HUGGINGFACE_API_TOKEN"
+          curl -i https://router.huggingface.co/v1/chat/completions \
+            -H "Authorization: Bearer $HUGGINGFACE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "model":"Qwen/Qwen2.5-7B-Instruct",
+              "messages":[
+                {"role":"user","content":"Say hello"}
+              ]
+            }'
 
       - name: Run evals
         env:
