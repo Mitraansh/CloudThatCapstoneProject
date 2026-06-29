@@ -1,12 +1,11 @@
-# promptfooconfig.yml
 prompts:
   - |
-      Review the Flower Shop FastAPI project files and confirm that the backend contains the expected routes and helpers.
-      Check Backend/app.py for signup, login, chat, classify_query, and the /api/status endpoint.
-      Check README.md for promptfoo eval instructions.
+    Review the Flower Shop FastAPI project files and confirm that the backend contains the expected routes and helpers.
+    Check Backend/app.py for signup, login, chat, classify_query, and the /api/status endpoint.
+    Check README.md for promptfoo eval instructions.
 
 providers:
-  - id: huggingface:chat:Qwen/Qwen2.5-7B-Instruct
+  - id: groq:llama-3.3-70b-versatile
 
 tests:
   - description: "Output contains the signup route"
