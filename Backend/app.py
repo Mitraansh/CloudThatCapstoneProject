@@ -69,7 +69,7 @@ def login(payload: dict[str, str]) -> dict[str, str]:
         raise HTTPException(status_code=400, detail="Email and password are required")
 
     user = db.query_one("SELECT email, password_hash FROM customers WHERE email = ?", (email,))
-    if not user or not auth.validate_login(password, user["password_hash"]):
+    if not user or not auth.validate_login(email, password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     token = auth.create_token(email)
@@ -77,8 +77,7 @@ def login(payload: dict[str, str]) -> dict[str, str]:
 
 
 @app.post("/api/chat")
-def chat(payload: dict[str, str], token: str | None = None, email: str | None = None) -> dict[str, Any]:
-    current_email = get_current_email(token, email)
+def chat(payload: dict[str, str], current_email: str = Depends(get_current_email)) -> dict[str, Any]:
     question = payload.get("question", "").strip()
     if not question:
         raise HTTPException(status_code=400, detail="Question is required")
