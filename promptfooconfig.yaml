@@ -6,7 +6,7 @@ prompts:
       Check README.md for promptfoo eval instructions.
 
 providers:
-  - id: github:gpt-4o-mini
+  - id: huggingface:meta-llama/Llama-3.1-8B-Instruct
 
 tests:
   - description: "Output contains the signup route"

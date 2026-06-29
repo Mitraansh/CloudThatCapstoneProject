@@ -17,13 +17,13 @@ jobs:
 
       - name: Validate required secrets
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HUGGINGFACE_API_TOKEN: ${{ secrets.test }}
         run: |
-          test -n "$GITHUB_TOKEN" || (echo "GITHUB_TOKEN is not available" && exit 1)
+          test -n "$HUGGINGFACE_API_TOKEN" || (echo "HUGGINGFACE_API_TOKEN is not available" && exit 1)
 
       - name: Run evals
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HUGGINGFACE_API_TOKEN: ${{ secrets.test }}
         run: promptfoo eval --output results.json
 
       - name: Check pass rate
