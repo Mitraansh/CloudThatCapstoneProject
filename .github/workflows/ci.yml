@@ -17,13 +17,13 @@ jobs:
 
       - name: Validate required secrets
         env:
-          HUGGINGFACE_API_TOKEN: ${{ secrets.test }}
+          HUGGINGFACE_API_TOKEN: ${{ secrets.TEST }}
         run: |
           test -n "$HUGGINGFACE_API_TOKEN" || (echo "HUGGINGFACE_API_TOKEN is not available" && exit 1)
 
       - name: Run evals
         env:
-          HUGGINGFACE_API_TOKEN: ${{ secrets.test }}
+          HUGGINGFACE_API_TOKEN: ${{ secrets.TEST }}
         run: promptfoo eval --output results.json
 
       - name: Check pass rate
