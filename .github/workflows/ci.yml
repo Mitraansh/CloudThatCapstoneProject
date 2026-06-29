@@ -11,47 +11,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install promptfoo
         run: npm install -g promptfoo
 
-      - name: Validate required secrets
+      - name: Validate Groq Secret
         env:
-          HUGGINGFACE_API_TOKEN: ${{ secrets.TEST }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          if [ -z "$HUGGINGFACE_API_TOKEN" ]; then
-            echo "HUGGINGFACE_API_TOKEN is not available"
-            exit 1
-          fi
+          test -n "$GROQ_API_KEY" || (echo "GROQ_API_KEY is missing" && exit 1)
+          echo "Groq API Key found"
 
-          echo "Token exists"
-          echo "Token length: ${#HUGGINGFACE_API_TOKEN}"
-
-      # ADD THIS
-      - name: Show Promptfoo version
-        run: |
-          promptfoo --version
-          npm list -g promptfoo
-
-      # ADD THIS
-      - name: Test Chat Completions API
+      - name: Run Promptfoo Evaluation
         env:
-          HUGGINGFACE_API_TOKEN: ${{ secrets.TEST }}
-        run: |
-          curl -i https://router.huggingface.co/v1/chat/completions \
-            -H "Authorization: Bearer $HUGGINGFACE_API_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "model":"Qwen/Qwen2.5-7B-Instruct",
-              "messages":[
-                {"role":"user","content":"Say hello"}
-              ]
-            }'
-
-      - name: Run evals
-        env:
-          HUGGINGFACE_API_TOKEN: ${{ secrets.TEST }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: promptfoo eval --output results.json
 
       - name: Check pass rate
@@ -59,11 +33,10 @@ jobs:
           PASS=$(python3 -c "
           import json
           with open('results.json') as f:
-              d = json.load(f)
-          s = d['results']['stats']
-          rate = s['successes'] / s['total'] * 100
+              d=json.load(f)
+          s=d['results']['stats']
+          rate=s['successes']/s['total']*100 if s['total'] else 0
           print(f'{rate:.1f}')
           ")
-          echo "Eval pass rate: $PASS%"
-          python3 -c "exit(0 if float('$PASS') >= 80 else 1)" || \
-            (echo "BLOCKED: Pass rate $PASS% is below 80% threshold." && exit 1)
+          echo "Pass Rate: $PASS%"
+          python3 -c "exit(0 if float('$PASS')>=80 else 1)"
