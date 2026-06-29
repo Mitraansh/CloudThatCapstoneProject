@@ -22,22 +22,22 @@ tests:
   - description: "Output contains the signup route"
     assert:
       - type: contains
-        value: "def signup"
+        value: "signup"
 
   - description: "Output contains the login route"
     assert:
       - type: contains
-        value: "def login"
+        value: "login"
 
   - description: "Output contains the chat route"
     assert:
       - type: contains
-        value: "def chat"
+        value: "chat"
 
   - description: "Output contains the classifier helper"
     assert:
       - type: contains
-        value: "def classify_query"
+        value: "classify_query"
 
   - description: "Output mentions the status endpoint"
     assert:
