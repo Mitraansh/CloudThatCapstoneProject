@@ -30,7 +30,9 @@ jobs:
 
       # ADD THIS
       - name: Show Promptfoo version
-        run: promptfoo --version
+        run: |
+          promptfoo --version
+          npm list -g promptfoo
 
       # ADD THIS
       - name: Test Hugging Face API
