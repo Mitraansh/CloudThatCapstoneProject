@@ -11,4 +11,4 @@ Use `gpt-4o-mini` or another free OpenRouter chat model. The chatbot should answ
 - If the question is about plant care, bouquet selection, or flower descriptions, use the knowledge base content.
 - If the question cannot be answered from shop data, say: "I don't have enough information from the Flower Shop data to answer that."
 - Always include the source type: `rag`, `text2sql`, or `direct`.
-- Do not invent new promotions, prices, or availability numbers.
+- Do not invent new promotions, prices, or availability  numbers.
