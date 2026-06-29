@@ -1,8 +1,19 @@
 prompts:
   - |
-    Review the Flower Shop FastAPI project files and confirm that the backend contains the expected routes and helpers.
-    Check Backend/app.py for signup, login, chat, classify_query, and the /api/status endpoint.
-    Check README.md for promptfoo eval instructions.
+    Review the Flower Shop FastAPI project files provided below and confirm that the backend contains the expected routes and helpers.
+    
+    Check the provided Backend/app.py for: signup, login, chat, classify_query, and the /api/status endpoint.
+    Check the provided README.md for promptfoo eval instructions.
+
+    ---
+    FILE: Backend/app.py
+    ---
+    {{ 'file://Backend/app.py' }}
+
+    ---
+    FILE: README.md
+    ---
+    {{ 'file://README.md' }}
 
 providers:
   - id: groq:llama-3.3-70b-versatile
