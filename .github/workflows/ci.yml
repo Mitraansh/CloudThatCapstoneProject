@@ -9,6 +9,7 @@ on:
 jobs:
   eval:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
 
@@ -19,7 +20,26 @@ jobs:
         env:
           HUGGINGFACE_API_TOKEN: ${{ secrets.TEST }}
         run: |
-          test -n "$HUGGINGFACE_API_TOKEN" || (echo "HUGGINGFACE_API_TOKEN is not available" && exit 1)
+          if [ -z "$HUGGINGFACE_API_TOKEN" ]; then
+            echo "HUGGINGFACE_API_TOKEN is not available"
+            exit 1
+          fi
+
+          echo "Token exists"
+          echo "Token length: ${#HUGGINGFACE_API_TOKEN}"
+
+      # ADD THIS
+      - name: Show Promptfoo version
+        run: promptfoo --version
+
+      # ADD THIS
+      - name: Test Hugging Face API
+        env:
+          HUGGINGFACE_API_TOKEN: ${{ secrets.TEST }}
+        run: |
+          curl -i \
+            https://router.huggingface.co/v1/models \
+            -H "Authorization: Bearer $HUGGINGFACE_API_TOKEN"
 
       - name: Run evals
         env:
